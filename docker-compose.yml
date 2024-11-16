@@ -1,0 +1,58 @@
+services:
+  mlflow:
+    image: ghcr.io/mlflow/mlflow:latest
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./mlruns:/mlruns
+    command: mlflow server --host 0.0.0.0 --port 5000
+    networks:
+      - ml-network
+
+  training:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - MLFLOW_TRACKING_URI=http://mlflow:5000
+    volumes:
+      - ./dataset:/app/data
+      - ./checkpoints:/app/checkpoints
+    command: ["train"]
+    depends_on:
+      - mlflow
+    networks:
+      - ml-network
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - MLFLOW_TRACKING_URI=http://mlflow:5000
+    volumes:
+      - ./checkpoints:/app/models
+    command: ["api"]
+    depends_on:
+      - mlflow
+    networks:
+      - ml-network
+
+  monitoring:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./metrics:/app/metrics
+    command: ["monitor"]
+    depends_on:
+      - api
+      - mlflow
+    networks:
+      - ml-network
+
+networks:
+  ml-network:
+    driver: bridge

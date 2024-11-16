@@ -1,0 +1,25 @@
+name: mlops_env
+channels:
+  - conda-forge
+dependencies:
+  - python=3.10
+  - tqdm
+  - opencv
+  - python-dotenv
+  - pytorch
+  - torchvision
+  - pillow
+  - numpy
+  - pandas
+  - scikit-learn
+  - matplotlib
+  - seaborn
+  - pytest
+  - pyyaml
+  - pip
+  - pip:
+      - mlflow
+      - fastapi
+      - uvicorn
+      - python-multipart
+      - hydra-core
