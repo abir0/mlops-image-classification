@@ -11,6 +11,7 @@ RUN apt-get update && apt-get install -y \
     libsm6 \
     libxext6 \
     libxrender-dev \
+    git \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements file
@@ -26,12 +27,7 @@ COPY . .
 RUN mkdir -p data/train data/val data/test models checkpoints metrics
 
 # Set environment variables
-ENV PYTHONPATH=/app
-
-# Create a non-root user
-RUN useradd -m -u 1000 appuser
-RUN chown -R appuser:appuser /app
-USER appuser
+ENV PYTHONPATH=/app/src:$PYTHONPATH
 
 # Expose port for API
 EXPOSE 8000

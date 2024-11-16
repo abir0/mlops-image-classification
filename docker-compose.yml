@@ -15,10 +15,16 @@ services:
       dockerfile: Dockerfile
     environment:
       - MLFLOW_TRACKING_URI=http://mlflow:5000
+      - GIT_PYTHON_REFRESH=quiet
     volumes:
       - ./dataset:/app/data
       - ./checkpoints:/app/checkpoints
       - ./metrics:/app/metrics
+    shm_size: '2gb'
+    deploy:
+      resources:
+        limits:
+          memory: 4G
     command: ["train"]
     depends_on:
       - mlflow
@@ -33,6 +39,7 @@ services:
       - "8000:8000"
     environment:
       - MLFLOW_TRACKING_URI=http://mlflow:5000
+      - PYTHONPATH=/app/src
     volumes:
       - ./checkpoints:/app/models
       - ./metrics:/app/metrics

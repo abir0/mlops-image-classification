@@ -9,7 +9,7 @@ case "$1" in
         ;;
     "api")
         echo "Starting API server..."
-        uvicorn api.inference:app --host 0.0.0.0 --port 8000 --workers 4
+        exec uvicorn src.api.inference:app --host 0.0.0.0 --port 8000 --workers 4 --reload
         ;;
     "monitor")
         echo "Starting monitoring service..."

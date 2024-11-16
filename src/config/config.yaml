@@ -4,8 +4,8 @@ data:
   val_split: 0.1
   test_split: 0.1
   img_size: 224
-  batch_size: 32
-  num_workers: 4
+  batch_size: 16
+  num_workers: 2
 
 model:
   architecture: "resnet18"
