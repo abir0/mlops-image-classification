@@ -19,7 +19,7 @@ def config():
             "pretrained": True,
             "learning_rate": 0.001,
         },
-        "data": {"img_size": 224, "batch_size": 32, "num_workers": 4},
+        "data": {"img_size": 224, "batch_size": 32, "num_workers": 2},
         "training": {"device": "cuda" if torch.cuda.is_available() else "cpu"},
     }
 
