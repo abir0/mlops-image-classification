@@ -3,6 +3,7 @@ checkpoints/
 data/
 dataset/
 logs/
+metrics/
 mlruns/
 models/
 
