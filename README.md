@@ -64,11 +64,13 @@ mlops-image-classification/
 ├── dataset/
 ├── notebooks/
 ├── scripts/
-├── requirements.txt
-├── Dockerfile
+├── .gitignore
 ├── docker-compose.yml
-├── README.md
-└── main.py
+├── Dockerfile
+├── environment.yml
+├── main.py
+├── requirements.txt
+└── README.md
 ```
 
 ## Setup
@@ -94,7 +96,7 @@ conda env create -f environment.yml
 conda activate mlops_env
 ```
 
-3. Using Docker:
+3. Using Docker (all services will be started automatically):
 ```bash
 docker compose up -d
 ```
@@ -113,7 +115,7 @@ python main.py --mode train
 
 1. Start the API server:
 ```bash
-python main.py --mode api
+uvicorn src.api.inference:app --host 0.0.0.0 --port 8000
 ```
 
 2. Make predictions:
@@ -160,14 +162,6 @@ Key configuration parameters in `src/config/config.yaml`:
 - `training`: Model training service
 - `api`: Inference API service
 - `monitoring`: Metrics monitoring service
-
-## Contributing
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
 
 ## Author
 
