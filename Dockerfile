@@ -1,43 +1,48 @@
-FROM python:3.9-slim
+FROM continuumio/miniconda3:latest AS builder
+
+# Copy environment file
+COPY environment.yml .
+
+# Create conda environment and clean up
+RUN conda env create -f environment.yml && conda clean -afy
+
+# Activate the environment and save it as the base Python environment
+RUN echo "source activate $(head -1 environment.yml | cut -d' ' -f2)" > /etc/profile.d/conda.sh
+
+# Target image
+FROM continuumio/miniconda3:latest
+
+# Copy the conda environment from builder
+COPY --from=builder /opt/conda/envs/ /opt/conda/envs/
+
+# Activate the environment in every shell
+ENV PATH /opt/conda/envs/mlops_env/bin:$PATH
 
 # Set working directory
 WORKDIR /app
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
-    python3-pip \
-    python3-dev \
-    libglib2.0-0 \
-    libsm6 \
-    libxext6 \
-    libxrender-dev \
-    git \
     && rm -rf /var/lib/apt/lists/*
-
-# Copy requirements file
-COPY requirements.txt .
-
-# Install Python dependencies
-RUN pip3 install --no-cache-dir -r requirements.txt
 
 # Copy project files
 COPY . .
 
-# Create directories for data and models
-RUN mkdir -p data/train data/val data/test models checkpoints metrics
+# Create directories
+RUN mkdir -p data models checkpoints metrics
 
 # Set environment variables
-ENV PYTHONPATH=/app/src:$PYTHONPATH
+ENV PYTHONPATH=/app:/app/src:$PYTHONPATH
 
 # Expose port for API
 EXPOSE 8000
 
-# Create entrypoint script
+# Copy entrypoint script and set executable permissions
 COPY scripts/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
-# Set the entrypoint
+# Set entrypoint
 ENTRYPOINT ["/entrypoint.sh"]
 
-# Default command (can be overridden)
+# Default command
 CMD ["api"]
